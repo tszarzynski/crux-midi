@@ -1,0 +1,35 @@
+[package]
+name = "crux-midi"
+version = "0.1.0"
+description = "MIDI device effects and a connection manager for Crux apps: list, connect, reconnect, scan for Bluetooth LE MIDI, and send"
+edition = "2024"
+rust-version = "1.91"
+license = "MIT OR Apache-2.0"
+keywords = ["midi", "crux", "bluetooth", "no-std"]
+categories = ["no-std", "multimedia::audio"]
+readme = "README.md"
+publish = false # crux_core comes from git until its no_std work is released
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+cognitive_complexity = "warn"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[features]
+# On by default. Turn it off to build for an embedded target.
+default = ["std"]
+std = ["crux_core/std", "facet/std", "futures/std", "serde/std"]
+
+[dependencies]
+# Crux's no_std spike (redbadger/crux#627, branch spike/no-std), as the
+# apps using this crate pin it.
+crux_core = { git = "https://github.com/redbadger/crux", rev = "974d2a9fc093755929eefb6c030bfe318fdf770c", default-features = false, features = ["crux_macros"] }
+facet = { version = "=0.46.5", default-features = false, features = ["alloc"] }
+futures = { version = "0.3", default-features = false, features = ["alloc"] }
+serde = { version = "1.0.229", default-features = false, features = ["alloc", "derive"] }
+
+[dev-dependencies]
+crux_core = { git = "https://github.com/redbadger/crux", rev = "974d2a9fc093755929eefb6c030bfe318fdf770c", features = ["testing"] }
