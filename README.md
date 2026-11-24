@@ -22,7 +22,7 @@ Event::Midi(event) => {
 It isn't on crates.io yet: it needs Crux's `no_std` work (redbadger/crux#627), pinned from git. Depend on it from git, with the same `crux_core` pin:
 
 ```toml
-crux_midi = { package = "crux-midi", git = "https://github.com/tszarzynski/crux-midi", tag = "v0.1.0", default-features = false }
+crux_midi = { package = "crux-midi", git = "https://github.com/tszarzynski/crux-midi", tag = "v0.1.1", default-features = false }
 ```
 
 ## Checks

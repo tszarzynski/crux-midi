@@ -89,7 +89,7 @@ fn reports_a_connection_and_its_bytes() {
 fn toggling_off_releases_the_device() {
     let mut midi = Connections::default();
     let _request = listed(&mut midi);
-    let mut update = midi.toggle::<Effect, Event>("1".into());
+    let mut update = midi.toggle::<Effect, Event>("1");
     assert_eq!(update.notices, [Notice::Released("1".into())]);
     assert!(matches!(
         update.command.effects().next(),
@@ -136,7 +136,7 @@ fn auto_connects_only_the_devices_the_app_wants() {
     assert_eq!(midi.devices().len(), 2, "the other is still listed");
 
     // Toggled, it connects all the same.
-    let mut update = midi.toggle::<Effect, Event>("2".into());
+    let mut update = midi.toggle::<Effect, Event>("2");
     assert!(matches!(
         update.command.effects().next(),
         Some(Effect::ConnectMidi(_))

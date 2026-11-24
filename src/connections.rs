@@ -210,11 +210,12 @@ impl Connections {
     /// Connects to a device, or disconnects it, or stops connecting to it.
     /// A device disconnected here isn't connected again automatically until
     /// toggled again.
-    pub fn toggle<Effect, Event>(&mut self, device_id: String) -> Update<Effect, Event>
+    pub fn toggle<Effect, Event>(&mut self, device_id: impl Into<String>) -> Update<Effect, Event>
     where
         Effect: MidiEffect,
         Event: From<MidiEvent> + Send + Unpin + 'static,
     {
+        let device_id = device_id.into();
         let mut notices = Vec::new();
         let command = if self.links.contains_key(&device_id) {
             self.no_auto_connect.insert(device_id.clone());
@@ -230,11 +231,12 @@ impl Connections {
 
     /// Disconnects a listed device and has the shell forget it. If it comes
     /// back (paired again), it's connected like a new device.
-    pub fn forget<Effect, Event>(&mut self, device_id: String) -> Update<Effect, Event>
+    pub fn forget<Effect, Event>(&mut self, device_id: impl Into<String>) -> Update<Effect, Event>
     where
         Effect: MidiEffect,
         Event: From<MidiEvent> + Send + Unpin + 'static,
     {
+        let device_id = device_id.into();
         if !self.devices.iter().any(|d| d.id == device_id) {
             return Update::unchanged();
         }
@@ -446,12 +448,14 @@ impl Connections {
         Effect: MidiEffect,
         Event: From<MidiEvent> + Send + Unpin + 'static,
     {
-        let Some(link) = self.links.get_mut(&device_id) else {
+        // News of an attempt given up on is stale.
+        let Some(link) = self
+            .links
+            .get_mut(&device_id)
+            .filter(|link| link.attempt == attempt)
+        else {
             return Update::unchanged();
         };
-        if link.attempt != attempt {
-            return Update::unchanged();
-        }
         match item {
             Connection::Connected => {
                 link.connected = true;
